@@ -82,21 +82,25 @@ chat_app/
 │
 └── README.md
 
-
+```
 🔐 Features (Implemented)
 User Signup & Login (JWT आधारित authentication)
 Protected Routes (middleware)
 Profile Update (with Cloudinary support)
 Token-based session handling
 Context API for global auth state
+
 🔄 Features (In Progress)
 Real-time chat using Socket.IO
 Online user tracking
 Message delivery & seen status
 UI/UX improvements
 Chat interface optimization
+
 ⚙️ Environment Variables
+
 Backend (server/.env)
+```bash
 PORT=5000
 MONGO_URI=your_mongodb_uri
 JWT_SECRET=your_secret_key
@@ -105,7 +109,10 @@ CLOUDINARY_API_KEY=your_key
 CLOUDINARY_API_SECRET=your_secret
 Frontend (client/.env)
 VITE_BACKEND_URL=http://localhost:5000
+```
+
 🚀 Getting Started
+```bash
 1. Clone the repository
 git clone https://github.com/your-username/chat-app.git
 cd chat-app
@@ -118,7 +125,9 @@ Frontend
 cd client
 npm install
 npm run dev
+```
 🔌 API Endpoints
+```bash
 Auth Routes
 POST /api/auth/signup
 POST /api/auth/login
@@ -129,12 +138,15 @@ GET /api/messages/users
 GET /api/messages/:id
 POST /api/messages/send/:id
 PUT /api/messages/mark/:id
+```
+
 🧠 Learning Highlights
 Full-stack authentication flow (JWT)
 Context API state management
 REST API design
 Middleware handling
 Debugging real-world integration issues
+
 📌 Future Improvements
 WebSocket optimization
 File/image sharing in chat
@@ -146,6 +158,7 @@ Deployment (Docker + Cloud)
 This is a personal learning project, but contributions, suggestions, and feedback are welcome.
 
 📄 License
+
 
 This project is open-source and available under the MIT License.
 
