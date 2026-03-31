@@ -1,0 +1,77 @@
+# -------------------------
+# Node modules
+# -------------------------
+node_modules/
+*/node_modules/
+
+# -------------------------
+# Logs
+# -------------------------
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# -------------------------
+# Environment variables
+# -------------------------
+.env
+.env.*
+!.env.example
+
+# -------------------------
+# Build folders
+# -------------------------
+dist/
+build/
+client/dist/
+server/dist/
+
+# -------------------------
+# Vite cache
+# -------------------------
+.vite/
+
+# -------------------------
+# OS files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# IDE / Editor files
+# -------------------------
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------------
+# Coverage reports
+# -------------------------
+coverage/
+
+# -------------------------
+# Temporary files
+# -------------------------
+tmp/
+temp/
+
+# -------------------------
+# Misc
+# -------------------------
+*.local
+*.cache
+
+# -------------------------
+# Database (if local files used)
+# -------------------------
+*.sqlite
+*.db
+
+# -------------------------
+# Uploads (if storing locally)
+# -------------------------
+uploads/
