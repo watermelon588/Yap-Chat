@@ -16,7 +16,7 @@ export const getUsersforSidebar = async (req, res) => {
     const promises = filterUsers.map(async (user) => {
       const messages = await Message.find({
         senderId: user._id,
-        recieverId: userId,
+        receiverId: userId,
         seen: false,
       });
       if (messages.length > 0) {
@@ -48,14 +48,14 @@ export const getMessages = async (req, res) => {
     
     const messages = await Message.find({
         $or: [
-            {senderId: myId, recieverId: selectedUserId},
-            {senderId: selectedUserId, recieverId: myId}
+            {senderId: myId, receiverId: selectedUserId},
+            {senderId: selectedUserId, receiverId: myId}
         ]
     });
 
     await Message.updateMany({
         senderId: selectedUserId,
-        recieverId: myId,
+        receiverId: myId,
         seen: false
     }, {seen: true});
 
@@ -97,7 +97,7 @@ export const markMessageAsSeen = async (req, res) => {
 export const sendMessage = async (req, res) => {
     try {
         const {text, image} = req.body;
-        const recieverId = req.params.id;
+        const receiverId = req.params.id;
         const senderId = req.user._id;
 
         let imageUrl;
@@ -107,20 +107,21 @@ export const sendMessage = async (req, res) => {
         }
         const newMessage = new Message({
             senderId,
-            recieverId,
+            receiverId,
             text,
             image: imageUrl
         });
-        // emmit the new message to the reciever if online
-        const receiverSocketId =  userSocketMap[recieverId];
+        await newMessage.save();
+        // emmit the new message to the receiver if online
+        const receiverSocketId =  userSocketMap[receiverId];
         if(receiverSocketId){
             io.to(receiverSocketId).emit("newMessage", newMessage);
         }
            
         res.json({
             success: true,
-            message: "Message sent successfully",
-            newMessage
+            Message: "Message sent successfully",
+            message: newMessage
         });
 
     } catch (error) {

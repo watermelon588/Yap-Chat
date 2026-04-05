@@ -1,13 +1,25 @@
-import React from 'react'
-import assets, { userDummyData } from '../assets/assets'
+import React, { useEffect , useState} from 'react'
+import assets from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { Authcontext } from "../../context/AuthContext";
 import { useContext } from 'react';
+import { ChatContext } from '../../context/Chatcontext';
 
-const Sidebar = ({selectedUser , setSelectedUser}) => {
+
+const Sidebar = () => {
+
+  const {getUsers, users,selectedUser, setSelectedUser, unseenMessages, setUnseenMessages} = useContext(ChatContext);
     
-  const {logout} = useContext(Authcontext);
+  const {logout, onlineUsers} = useContext(Authcontext);
+
+  const [input, setInput] = useState(false);
+
+  const filteredUsers = input ? users.filter((user) => user.fullName.toLowerCase().includes(input.toLowerCase())) : users;
   
+  useEffect(()=>{
+    getUsers();
+  },[onlineUsers])
+
   const navigate = useNavigate();
   return (
     <div className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}>
@@ -29,13 +41,13 @@ const Sidebar = ({selectedUser , setSelectedUser}) => {
           <div className='backdrop-blur-xl bg-white/10 border border-white/10
                shadow-[0_0_25px_rgba(0,0,0,0.35)] rounded-full flex items-center gap-3 py-3 px-4 mt-5'>
             <img src={assets.search_icon} alt="search_icon" className='w-3'/>
-            <input type="text" className='bg-transparent border-none outline-none text-white text-xs placeholder-white/40 flex-1' placeholder='Search User ...'/>
+            <input onChange={(e)=>setInput(e.target.value)} type="text" className='bg-transparent border-none outline-none text-white text-xs placeholder-white/40 flex-1' placeholder='Search User ...'/>
           </div>
         </div> 
         {/* user profiles */}
         <div className='flex flex-col'>
-          {userDummyData.map((user,index)=>(
-            <div onClick={()=>{setSelectedUser(user)}}
+          {filteredUsers.map((user,index)=>(
+            <div onClick={()=>{setSelectedUser(user); setUnseenMessages((prev) => ({ ...prev, [user._id]: 0 }))}} key={index}
             className={`relative flex items-center gap-3 p-3 pl-4 rounded-xl cursor-pointer 
               transition-all max-sm:text-sm
               hover:bg-white/10 hover:backdrop-blur-lg mt-2 ${selectedUser?._id === user._id && ' backdrop-blur-xl border'}`}>
@@ -43,12 +55,12 @@ const Sidebar = ({selectedUser , setSelectedUser}) => {
               <div className='flex flex-col leading-5'>
                 <p>{user.fullName}</p>
                 {
-                  index < 3 
+                  onlineUsers.includes(user._id)
                   ? <span className='text-green-400 text-xs'>Online</span>
                   : <span className='text-neutral-400 text-xs'>Offline</span>
                 }
               </div>
-              {index > 2 && <p className="
+              {unseenMessages[user._id] > 0 && <p className="
                     absolute top-4 right-4
                     text-[10px] font-medium text-white
                     h-5 w-5 flex justify-center items-center
@@ -56,7 +68,7 @@ const Sidebar = ({selectedUser , setSelectedUser}) => {
                     backdrop-blur-xl
                     bg-violet-500/60 
                     border border-white/20
-                  ">{index}</p>}
+                  ">{unseenMessages[user._id]}</p>}
             </div>
           ))}
         </div>
