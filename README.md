@@ -124,7 +124,7 @@ npm run dev
 ## 📸 Preview
 
 <p align="center">
-  <img src="./assets/Preview1.jpg" alt="Yap Chat UI" width="700"/>
+  <img src="./assets/Preview1.jpg" alt="Yap Chat UI" width="900"/>
 </p>
 
 ## ✨ Author
