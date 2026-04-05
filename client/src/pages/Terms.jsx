@@ -6,9 +6,9 @@ const Terms = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-[#0f0f1a] to-[#1a0f1f] text-white px-4 py-10">
+    <div className="min-h-screen flex items-center justify-center text-white px-4 py-10">
 
-      <div className="relative max-w-3xl w-full backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-6 md:p-10 shadow-xl">
+      <div className="relative max-w-3xl w-full backdrop-blur-3xl bg-white/5 border border-white/10 rounded-2xl p-6 md:p-10 shadow-xl ">
         {/* 🔙 BACK BUTTON */}
         <img
           onClick={() => navigate("/")}
@@ -25,7 +25,9 @@ const Terms = () => {
           Last updated: {new Date().toLocaleDateString()}
         </p>
 
-        <div className="space-y-8 text-[15px] leading-relaxed text-gray-300">
+        <div className="space-y-2 text-[15px] leading-relaxed text-gray-300">
+          <div className="relative max-w-3xl w-full md:p-10 shadow-xl max-h-[55vh] overflow-y-auto">
+          
 
           <section>
             <h2 className="text-lg font-medium text-white/90 mb-2">1. General Usage</h2>
@@ -92,7 +94,7 @@ const Terms = () => {
               If you do not agree, please discontinue use of the application.
             </p>
           </section>
-
+        </div>
         </div>
 
       </div>
