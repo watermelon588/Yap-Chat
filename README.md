@@ -1,4 +1,6 @@
-# 💬 Yap Chat
+<p align="center">
+  <img src="./assets/Frame 498.jpg" alt="Yap Chat UI" width="800"/>
+</p>
 
 A modern real-time chat application built with the MERN stack and Socket.io.
 
@@ -119,9 +121,11 @@ npm run dev
 - 🔔 Push notifications
 - 🔍 Message search
 
-## 📸 Screenshots
+## 📸 Preview
 
-> Add UI screenshots here to showcase the interface
+<p align="center">
+  <img src="./assets/preview.jpg" alt="Yap Chat UI" width="800"/>
+</p>
 
 ## ✨ Author
 
