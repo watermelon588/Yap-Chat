@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/Frame 498.jpg" alt="Yap Chat UI" width="800"/>
+  <img src="./assets/Frame 498.jpg" alt="Yap Chat" width="800"/>
 </p>
 
 A modern real-time chat application built with the MERN stack and Socket.io.
@@ -124,7 +124,7 @@ npm run dev
 ## 📸 Preview
 
 <p align="center">
-  <img src="./assets/preview.jpg" alt="Yap Chat UI" width="800"/>
+  <img src="./assets/Preview.jpg" alt="Yap Chat UI" width="800"/>
 </p>
 
 ## ✨ Author
