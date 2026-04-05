@@ -37,6 +37,8 @@ Yap Chat focuses on **clean UI, real-time communication, and smooth user experie
 
 ## 📁 Project Structure
 
+```bash
+
 Yap-Chat/
 │
 ├── client/                         # Frontend (React)
@@ -59,6 +61,7 @@ Yap-Chat/
 │   └── server.js                 # Entry point
 │
 └── README.md
+```
 
 ## ⚙️ Installation
 
@@ -97,7 +100,7 @@ npm run dev
 
 # 🧩 5. HOW IT WORKS (IMPORTANT FOR INTERVIEW)
 
-```md
+
 ## 🔄 How It Works
 
 - User logs in → JWT authentication
