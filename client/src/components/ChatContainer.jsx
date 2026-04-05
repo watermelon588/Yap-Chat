@@ -53,28 +53,31 @@ const ChatContainer = () => {
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/* -------header--------- */}
+      
       <div className="flex items=centre gap-3 py-3 mx-4 border-b brder-stone-500">
+        {/* 🔙 BACK BUTTON */}
+        <img
+          onClick={() => {console.log("BACK CLICKED");
+            setSelectedUser(null)}}
+          src={assets.arrow_icon}
+          alt="arrow"
+          className=" max-w-5 max-h-6 m-1 cursor-pointer"
+        />
         <img
           src={selectedUser.profilePic || assets.avatar_icon}
           alt="image"
           className="w-8 rounded-full"
         />
         <p className="flex-1 text-lg text-white flex items-center gap-2">
-          {selectedUser.fullName}
+          {selectedUser.fullname}
           {onlineUsers.includes(selectedUser._id) && (
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
           )}
         </p>
         <img
-          onClick={() => setSelectedUser(null)}
-          src={assets.arrow_icon}
-          alt="arrow"
-          className="md:hidden max-w-5 max-h-5"
-        />
-        <img
           src={assets.help_icon}
           alt="help"
-          className="max-sm:hidden max-w-5 max-h-5"
+          className="max-sm:hidden max-w-5 max-h-5 cursor-pointer"
         />
       </div>
       {/* ---------chat area -------- */}
