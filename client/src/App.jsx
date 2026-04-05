@@ -6,6 +6,7 @@ import ProfilePage from './pages/ProfilePage'
 import {Toaster} from 'react-hot-toast'
 import { Authcontext } from '../context/AuthContext'
 import { useContext } from 'react'
+import Terms from './pages/Terms'
 
 const App = () => {
   const {authUser} = useContext(Authcontext);
@@ -23,6 +24,7 @@ const App = () => {
       
       <Routes>
         <Route path='/' element={authUser ? <HomePage/> : <Navigate to="/login" />}/>
+        <Route path='/terms' element={<Terms/>}/>
         <Route path='/login' element={!authUser ? <LoginPage/> : <Navigate to="/" />}/>
         <Route path='/profile' element={authUser ? <ProfilePage/> : <Navigate to="/login" />}/>
       </Routes>

@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
 import {Authcontext} from '../../context/AuthContext.jsx'
+import { Link } from "react-router-dom";
+
 
 const LoginPage = () => {
 
@@ -123,7 +125,15 @@ const LoginPage = () => {
 
           <div className='flex items-center gap-2 text-sm text-gray-400'>
             <input type="checkbox"  required/>
-            <p>Agree to the terms of use & privacy policy.</p>
+            <p className="text-gray-400 text-sm">
+  Agree to the{" "}
+  <Link
+    to="/terms"
+    className="text-purple-400 hover:underline"
+  >
+    terms of use & privacy policy
+  </Link>.
+</p>
           </div>
 
           <div className='flex flex-col gap-2'>

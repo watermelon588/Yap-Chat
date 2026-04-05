@@ -4,8 +4,10 @@ import { formatMessageTime } from "../lib/utils";
 import { ChatContext } from "../../context/Chatcontext";
 import { Authcontext } from "../../context/AuthContext";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ChatContainer = () => {
+  const navigate = useNavigate();
   const { messages, selectedUser, setSelectedUser, sendMessage, getMessages } =
     useContext(ChatContext);
   const { authUser, onlineUsers } = useContext(Authcontext);
@@ -53,12 +55,11 @@ const ChatContainer = () => {
   return selectedUser ? (
     <div className="h-full overflow-scroll relative backdrop-blur-lg">
       {/* -------header--------- */}
-      
+
       <div className="flex items=centre gap-3 py-3 mx-4 border-b brder-stone-500">
         {/* 🔙 BACK BUTTON */}
         <img
-          onClick={() => {console.log("BACK CLICKED");
-            setSelectedUser(null)}}
+          onClick={() => setSelectedUser(null)}
           src={assets.arrow_icon}
           alt="arrow"
           className=" max-w-5 max-h-6 m-1 cursor-pointer"
@@ -74,11 +75,34 @@ const ChatContainer = () => {
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
           )}
         </p>
-        <img
-          src={assets.help_icon}
-          alt="help"
-          className="max-sm:hidden max-w-5 max-h-5 cursor-pointer"
-        />
+        <div className="relative group inline-block">
+          <img
+            onClick={() => navigate("/terms")}
+            src={assets.help_icon}
+            alt="help"
+            className="max-sm:hidden max-w-5 max-h-5 cursor-pointer"
+          />
+
+          {/* 🔥 TOOLTIP */}
+          <span
+            className="
+    absolute right-0 top-7 
+    whitespace-nowrap
+    text-[12px]
+    px-2 py-1
+    rounded-md
+    bg-black/70 backdrop-blur-md
+    text-white/80
+    opacity-0 group-hover:opacity-100
+    translate-y-1 group-hover:translate-y-0
+    transition-all duration-200
+    pointer-events-none
+    z-50
+  "
+          >
+            Terms & Privacy Policy
+          </span>
+        </div>
       </div>
       {/* ---------chat area -------- */}
       <div className="flex flex-col h-[calc(100%-120px)] overflow-y-scroll p-3 pb-6">
@@ -86,7 +110,9 @@ const ChatContainer = () => {
           <div
             key={msg._id}
             className={`flex items-end gap-2 ${
-              msg.senderId?.toString() === authUser._id?.toString() ? "justify-end" : "justify-start"
+              msg.senderId?.toString() === authUser._id?.toString()
+                ? "justify-end"
+                : "justify-start"
             }`}
           >
             {msg.image ? (
