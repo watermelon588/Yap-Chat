@@ -1,13 +1,25 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import assets from '../assets/assets'
 import {Authcontext} from '../../context/AuthContext.jsx'
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 
 const LoginPage = () => {
 
 
+  const location = useLocation()
   const [currentState,setcurrentState] = useState("Sign up")
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const mode = searchParams.get('mode')
+    if (mode === 'login') {
+      setcurrentState("Login")
+    } else if (mode === 'signup') {
+      setcurrentState("Sign up")
+    }
+  }, [location.search])
+
   const [fullName,setFullName] = useState("")
   const [email,setEmail] = useState("")
   const [password,setPassword] = useState("")

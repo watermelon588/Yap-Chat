@@ -58,6 +58,10 @@ const assets = {
     search_icon,
     avatar_icon,
     profile_martin,
+    profile_alison,
+    profile_enrique,
+    profile_marco,
+    profile_richard,
     gallery_icon,
     send_button
 }
