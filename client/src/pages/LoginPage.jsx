@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import assets from '../assets/assets'
 import {Authcontext} from '../../context/AuthContext.jsx'
 import { Link, useLocation } from "react-router-dom";
+import BackButton from '../components/BackButton'
 
 
 const LoginPage = () => {
@@ -41,13 +42,15 @@ const LoginPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex items-center justify-center md:justify-evenly max-:flex-col backdrop-blur-2xl ">
+    <div className="min-h-[100dvh] bg-cover bg-center flex flex-col md:flex-row items-center justify-center md:justify-evenly gap-6 px-4 py-8 backdrop-blur-2xl ">
+      {/* back to the landing page */}
+      <BackButton to="/" label="Back to home" className="absolute top-5 left-5 z-20" />
       {/* ____________left______________ */}
-      <img src={assets.logo7} alt="" className='w-[min(30vw,500px)]'/>
+      <img src={assets.logo7} alt="" className='w-[min(55vw,240px)] md:w-[min(30vw,500px)]'/>
       {/* ____________right______________ */}
 
       <form onSubmit={onSubmitHandler}
-      className='border-1 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg max-w-sm w-full'>
+      className='border-1 bg-white/8 text-white border-gray-500 p-5 sm:p-6 flex flex-col gap-5 sm:gap-6 rounded-lg shadow-lg max-w-sm w-full'>
         <h2 className='font-medium text-2xl flex justify-between items-center'>
           {currentState}
           {isDataSubmitted && <img onClick={()=> setIsDataSubmitted(false)} src={assets.arrow_icon} alt="" className='w-5 cursor-pointer'/>}

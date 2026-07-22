@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Authcontext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { ChatContext } from "../../context/Chatcontext";
+import RoomPanel from "./RoomPanel";
+import BackButton from "./BackButton";
 
 const Sidebar = () => {
   const {
@@ -13,11 +15,13 @@ const Sidebar = () => {
     setSelectedUser,
     unseenMessages,
     setUnseenMessages,
+    activeRoom,
   } = useContext(ChatContext);
 
   const { logout, onlineUsers } = useContext(Authcontext);
 
   const [input, setInput] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const filteredUsers = input
     ? users.filter((user) =>
@@ -27,39 +31,63 @@ const Sidebar = () => {
 
   useEffect(() => {
     getUsers();
-  }, [onlineUsers]);
+  }, [onlineUsers, activeRoom]);
 
   const navigate = useNavigate();
   return (
     <div
-      className={`bg-[#8185B2]/10 h-full p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ""}`}
+      className={`bg-[#8185B2]/10 h-full p-3 sm:p-5 sm:rounded-r-xl overflow-y-auto text-white ${selectedUser ? "max-md:hidden" : ""}`}
     >
       <div className="pb-5">
-        <div className="flex justify-between items-center">
-          <img src={assets.logo7} alt="logo" className="max-w-30" />
-          <div className="relative py-2 group">
+        <div className="flex justify-between items-center gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <BackButton to="/" iconOnly label="Back to home" />
+            <img src={assets.logo7} alt="logo" className="w-20 sm:w-24" />
+          </div>
+          {/* tap to open so it works on touch devices too */}
+          <div className="relative py-2">
             <img
+              onClick={() => setMenuOpen((prev) => !prev)}
               src={assets.menu_icon}
               alt="menu"
-              className="max-h-5 cursor-pointer"
+              className="max-h-5 cursor-pointer p-1 box-content"
             />
-            <div
-              className="absolute top-full right-0 z-20 w-40 p-5 rounded-md backdrop-blur-xl bg-white/10 border border-white/20
-             shadow-[0_0_20px_rgba(0,0,0,0.3)] text-gray-200 hidden group-hover:block "
-            >
-              <p
-                onClick={() => navigate("/profile")}
-                className="cursor-pointer text-sm"
-              >
-                Edit Profile
-              </p>
-              <hr className="my-2 border-t border-gray-500" />
-              <p onClick={() => logout()} className="cursor-pointer text-sm">
-                Logout
-              </p>
-            </div>
+            {menuOpen && (
+              <>
+                <div
+                  className="fixed inset-0 z-10"
+                  onClick={() => setMenuOpen(false)}
+                />
+                <div
+                  className="absolute top-full right-0 z-20 w-40 p-5 rounded-md backdrop-blur-xl bg-black/60 border border-white/20
+             shadow-[0_0_20px_rgba(0,0,0,0.3)] text-gray-200"
+                >
+                  <p
+                    onClick={() => {
+                      setMenuOpen(false);
+                      navigate("/profile");
+                    }}
+                    className="cursor-pointer text-sm"
+                  >
+                    Edit Profile
+                  </p>
+                  <hr className="my-2 border-t border-gray-500" />
+                  <p
+                    onClick={() => {
+                      setMenuOpen(false);
+                      logout();
+                    }}
+                    className="cursor-pointer text-sm"
+                  >
+                    Logout
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
+        {/* room panel */}
+        <RoomPanel />
         {/* search box */}
         <div>
           <div
@@ -77,6 +105,21 @@ const Sidebar = () => {
         </div>
         {/* user profiles */}
         <div className="flex flex-col">
+          {!activeRoom && (
+            <p className="text-xs text-white/40 text-center mt-6 px-4 leading-5">
+              Create a room or join one with a code to start chatting.
+            </p>
+          )}
+          {activeRoom && filteredUsers.length === 0 && (
+            <p className="text-xs text-white/40 text-center mt-6 px-4 leading-5">
+              You are the only one here yet. Share the code
+              <span className="text-violet-200 tracking-widest">
+                {" "}
+                {activeRoom.code}{" "}
+              </span>
+              or the QR to invite people.
+            </p>
+          )}
           {filteredUsers.map((user, index) => (
             <div
               onClick={() => {
@@ -91,10 +134,10 @@ const Sidebar = () => {
               <img
                 src={user?.profilePic || assets.avatar_icon}
                 alt=""
-                className="w-[35px] aspect-[1/1] rounded-full"
+                className="w-[35px] h-[35px] shrink-0 rounded-full object-cover"
               />
-              <div className="flex flex-col leading-5">
-                <p>{user.fullname}</p>
+              <div className="flex flex-col leading-5 min-w-0">
+                <p className="truncate">{user.fullname}</p>
                 {onlineUsers.includes(user._id) ? (
                   <span className="text-green-400 text-xs">Online</span>
                 ) : (

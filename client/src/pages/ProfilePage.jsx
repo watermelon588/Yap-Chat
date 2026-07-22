@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import assets from "../assets/assets";
 import { Authcontext } from "../../context/AuthContext";
+import BackButton from "../components/BackButton";
 
 const ProfilePage = () => {
 
@@ -16,7 +17,7 @@ const ProfilePage = () => {
     event.preventDefault();
     if(!selectedImg){
       await updateProfile({fullname: name,bio});
-      navigate('/');
+      navigate('/chat');
       return;
     }
 
@@ -25,16 +26,19 @@ const ProfilePage = () => {
     reader.onload = async ()=>{
       const base64Image = reader.result;
       await updateProfile({profilePic: base64Image, fullname: name,bio});
-      navigate('/');
+      navigate('/chat');
     }
     
   }
   return (
     <div>
-      <div className="min-h-screen bg-cover bg-center flex items-center justify-center md:justify-evenly max-:flex-col backdrop-blur-2xl ">
-        <div className="bg-white/8 w-5/6 max-w-2xl backdrop-blur-2xl text-gray-300 border-1 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg">
-          <form onSubmit={HandleSubmit} className=' text-white p-6 flex flex-col gap-7 rounded-lg max-w-sm w-full'>
-            <h2 className='font-medium text-2xl flex justify-between items-center'>Profile details</h2>
+      <div className="min-h-[100dvh] bg-cover bg-center flex items-center justify-center px-4 py-8 backdrop-blur-2xl ">
+        <div className="bg-white/8 w-full sm:w-5/6 max-w-2xl backdrop-blur-2xl text-gray-300 border-1 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg">
+          <form onSubmit={HandleSubmit} className=' text-white p-5 sm:p-6 flex flex-col gap-5 sm:gap-7 rounded-lg max-w-sm w-full'>
+            <div className="flex items-center gap-3">
+              <BackButton to="/chat" iconOnly label="Back to chat" />
+              <h2 className='font-medium text-2xl'>Profile details</h2>
+            </div>
             <label
               htmlFor="avatar"
               className="flex items-center gap-3 cursor-pointer"
@@ -53,7 +57,7 @@ const ProfilePage = () => {
                     : assets.avatar_icon
                 }
                 alt=""
-                className={`w-12 h-12 ${selectedImg && "rounded-full"}`}
+                className={`w-12 h-12 object-cover ${selectedImg && "rounded-full"}`}
               ></img>
               upload profile image
             </label>
@@ -86,8 +90,8 @@ const ProfilePage = () => {
               transition-all duration-300
             " type="submit">Save</button>
           </form>
-          <img className={`max-w-60 aspect-square rounded-full mx-10 max-sm:mt-10 ${selectedImg && "rounded-full"}`} 
-src={ authUser.profilePic ||assets.logo2} alt="" />
+          <img className="w-32 h-32 sm:w-52 sm:h-52 object-cover rounded-full mx-6 sm:mx-10 max-sm:mt-10 shrink-0"
+src={ authUser?.profilePic ||assets.logo2} alt="" />
         </div>
       </div>
     </div>

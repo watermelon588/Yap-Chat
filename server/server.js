@@ -6,6 +6,7 @@ import { connectDB } from './lib/db.js';
 import { connect } from 'http2';
 import userRouter from './routes/userRoutes.js';
 import messageRouter from './routes/messageRoutes.js';
+import roomRouter from './routes/roomRoutes.js';
 import {Server} from "socket.io";
 
 // Create express app and HTTP server
@@ -54,6 +55,7 @@ app.use("/api/status", (req, res) => {
 });
 app.use("/api/auth", userRouter);
 app.use("/api/messages", messageRouter);
+app.use("/api/rooms", roomRouter);
 
 // Connect to MongoDB
 await connectDB();

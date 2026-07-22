@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
@@ -13,6 +13,14 @@ import Terms from './pages/Terms'
 
 const App = () => {
   const {authUser} = useContext(Authcontext);
+
+  // a QR / invite link looks like /chat?join=CODE - keep the code around so it
+  // survives the trip through the login page
+  useEffect(() => {
+    const code = new URLSearchParams(window.location.search).get("join");
+    if (code) sessionStorage.setItem("pendingJoinCode", code);
+  }, []);
+
   return (
     <div>
       <Toaster position='top-right' reverseOrder={false}/>

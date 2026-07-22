@@ -1,6 +1,7 @@
 import { useEffect, useContext, useState } from 'react'
 import { ChatContext } from '../../context/Chatcontext';
 import { Authcontext } from '../../context/AuthContext';
+import assets from '../assets/assets';
 
 
 const RightSidebar = () => {
@@ -18,13 +19,13 @@ const RightSidebar = () => {
 
   return selectedUser && (
     // -------------------header-------------------
-    <div className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-scroll${selectedUser ? "max-md:hidden" : ""}`}>
+    <div className={`bg-[#8185B2]/10 text-white w-full relative overflow-y-auto ${selectedUser ? "max-md:hidden" : ""}`}>
       <div className='transform -translate-y-6 pt-14 flex flex-col items-center gap-2 text-xs font-light mx-auto'>
-        <img src={selectedUser?.profilePic || assets.avatar_icon} alt="" 
-        className='w-20 aspect-[1/1] rounded-full'/>
-        <h1 className='px-10 text-xl font-medium mx-auto flex items-center gap-2'>
-          {onlineUsers.includes(selectedUser._id) && <p className='w-2 h-2 rounded-full bg-green-500'></p>}
-          {selectedUser.fullName}
+        <img src={selectedUser?.profilePic || assets.avatar_icon} alt=""
+        className='w-20 h-20 rounded-full object-cover'/>
+        <h1 className='px-6 sm:px-10 text-lg sm:text-xl font-medium mx-auto flex items-center gap-2 text-center'>
+          {onlineUsers.includes(selectedUser._id) && <p className='w-2 h-2 rounded-full bg-green-500 shrink-0'></p>}
+          {selectedUser.fullname}
         </h1>
         <p className='text-center px-10 mx-auto'>{selectedUser.bio}</p>
       </div>
@@ -33,11 +34,11 @@ const RightSidebar = () => {
       {/* -----------media------------- */}
       <div className='px-5 text-xs'>
         <p>Media</p>
-        <div className='mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80'>
+        <div className='mt-2 max-h-[200px] overflow-y-auto grid grid-cols-2 gap-3 opacity-80'>
           {msgImages.map((url,index)=>(
             <div key={index} onClick={()=>window.open(url)}
             className='cursor-pointer rounded'>
-              <img src={url} alt="" className='h-full rounded-md' />
+              <img src={url} alt="" className='w-full aspect-square object-cover rounded-md' />
             </div>
           ))}
         </div>
@@ -50,7 +51,7 @@ const RightSidebar = () => {
         bg-violet-500/60 
         backdrop-blur-xl
         text-white text-sm font-light
-        py-2 px-20
+        py-2 px-10 w-[80%] max-w-[220px]
         rounded-full cursor-pointer
         border border-white/10
       ">
