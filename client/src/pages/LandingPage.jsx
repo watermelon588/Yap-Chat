@@ -4,6 +4,7 @@ import { gsap } from 'gsap';
 import { Authcontext } from '../../context/AuthContext';
 import PillNav from '../components/PillNav';
 import assets from '../assets/assets';
+import ScrollStack, { ScrollStackItem } from '../components/ScrollStack';
 
 const LandingPage = () => {
   const { authUser, logout } = useContext(Authcontext);
@@ -22,7 +23,8 @@ const LandingPage = () => {
     { sender: 'other', text: 'Made us a room — the code is YAP-42. Nobody else can see it.', time: '10:24 AM', visible: false },
     { sender: 'me', text: 'Joined. That QR on the invite screen is a nice touch.', time: '10:24 AM', visible: false },
     { sender: 'other', type: 'voice', text: '0:07', time: '10:25 AM', visible: false },
-    { sender: 'me', text: 'Voice notes too? Alright, I am moving the group over.', time: '10:25 AM', visible: false }
+    { sender: 'me', text: 'Voice notes too? Alright, I am moving the group over.', time: '10:25 AM', visible: false },
+    { sender: 'other', type: 'call', text: 'Video call started · VC-7QK2', time: '10:26 AM', visible: false }
   ]);
 
   useEffect(() => {
@@ -51,6 +53,8 @@ const LandingPage = () => {
       { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: 'power3.out' },
       '-=0.2'
     );
+    // the video call card is left alone - ScrollStack drives its scale and
+    // position, and starting it at opacity 0 would hide it behind the stack
 
     // 2. Animate Chat Mockup Message Bubbles Sequentially
     let delay = 1.5;
@@ -160,6 +164,46 @@ const LandingPage = () => {
         pillTextColor="rgba(255, 255, 255, 0.9)"
       />
 
+      {/* Auth buttons, top right. Hidden below md because the pill nav goes
+          full width there and the hamburger already owns that corner. */}
+      <div className="fixed top-6 right-6 z-[1000] hidden md:flex items-center gap-2">
+        {authUser ? (
+          <>
+            <Link
+              to="/chat"
+              className="py-2 px-4 rounded-full bg-violet-500/70 hover:bg-violet-600 border border-white/10 text-white text-xs font-medium backdrop-blur-xl transition-all duration-300 flex items-center gap-2"
+            >
+              <i className="fa-solid fa-comments text-[11px]"></i>
+              My rooms
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="py-2 px-4 rounded-full bg-white/8 hover:bg-white/15 border border-white/10 text-white text-xs font-medium backdrop-blur-xl transition-all duration-300 cursor-pointer flex items-center gap-2"
+            >
+              <i className="fa-solid fa-right-from-bracket text-[11px]"></i>
+              Sign out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/login?mode=login"
+              className="py-2 px-4 rounded-full bg-white/8 hover:bg-white/15 border border-white/10 text-white text-xs font-medium backdrop-blur-xl transition-all duration-300 flex items-center gap-2"
+            >
+              <i className="fa-solid fa-right-to-bracket text-[11px]"></i>
+              Log in
+            </Link>
+            <Link
+              to="/login?mode=signup"
+              className="py-2 px-4 rounded-full bg-violet-500/70 hover:bg-violet-600 border border-white/10 text-white text-xs font-medium backdrop-blur-xl transition-all duration-300 flex items-center gap-2"
+            >
+              <i className="fa-solid fa-user-plus text-[11px]"></i>
+              Sign up
+            </Link>
+          </>
+        )}
+      </div>
+
       {/* Background Decorative HSL Glow Orbs */}
       <div className="absolute top-[10%] left-[-10%] w-[40vw] h-[40vw] rounded-full bg-purple-600/10 blur-[120px] pointer-events-none z-0" />
       <div className="absolute top-[30%] right-[-10%] w-[35vw] h-[35vw] rounded-full bg-pink-500/10 blur-[120px] pointer-events-none z-0" />
@@ -172,8 +216,8 @@ const LandingPage = () => {
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-xl mb-6 text-sm text-purple-300 font-medium tracking-wide animate-pulse"
         >
           <span className="w-2 h-2 rounded-full bg-purple-500 shadow-[0_0_10px_#8b5cf6]" />
-          <i className="fa-solid fa-key text-[10px]"></i>
-          Private rooms &amp; voice notes are live
+          <i className="fa-solid fa-video text-[10px]"></i>
+          New: group video calls, up to 8 people
         </div>
 
         <h1
@@ -192,7 +236,8 @@ const LandingPage = () => {
         >
           YapChat is no longer one big room for everyone. Create a room, pick your own code or let us
           generate one, then share it as text or a QR. Only the people holding that code show up in
-          your sidebar — where you can trade messages, photos and voice notes in real time.
+          your sidebar — where you can trade messages, photos and voice notes, or jump on a
+          group video call in a single tap.
         </p>
 
         <div ref={heroButtonsRef} className="flex flex-col sm:flex-row gap-4 mb-16 z-20">
@@ -235,135 +280,176 @@ const LandingPage = () => {
           )}
         </div>
 
-        {/* Live Interface Preview / Interactive Mockup */}
-        <div 
-          ref={chatMockupRef}
-          className="w-full max-w-4xl mx-auto rounded-2xl border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_24px_50px_rgba(0,0,0,0.5)] overflow-hidden"
+        {/* Live Interface Preview - chat and a video call mockup stacked using ScrollStack */}
+        {/* useWindowScroll keeps the page itself scrolling rather than trapping
+            it in a nested box. itemScale/baseScale are picked so the last card
+            settles at exactly 1. */}
+        <ScrollStack
+          useWindowScroll={true}
+          className="w-full max-w-3xl mx-auto mt-10"
+          itemDistance={110}
+          itemStackDistance={56}
+          stackPosition="16%"
+          scaleEndPosition="6%"
+          itemScale={0.05}
+          baseScale={0.95}
         >
-          {/* Mock Window Header */}
-          <div className="px-4 py-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
-            <div className="flex gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-rose-500/80" />
-              <span className="w-3 h-3 rounded-full bg-amber-500/80" />
-              <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
-            </div>
-            <div className="text-xs text-slate-500 font-mono tracking-wider uppercase">YapChat Live Demo</div>
-            <div className="w-12" />
-          </div>
+          <ScrollStackItem>
+            <div
+              ref={chatMockupRef}
+              className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_24px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col w-full"
+            >
+              {/* Mock Window Header */}
+              <div className="px-4 py-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
+                <div className="flex gap-1.5">
+                  <span className="w-3 h-3 rounded-full bg-rose-500/80" />
+                  <span className="w-3 h-3 rounded-full bg-amber-500/80" />
+                  <span className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                </div>
+                <div className="text-xs text-slate-500 font-mono tracking-wider uppercase">YapChat Live Demo</div>
+                <div className="w-12" />
+              </div>
 
-          {/* Mock Chat Screen Layout */}
-          <div className="grid grid-cols-1 md:grid-cols-[250px_1fr] h-[450px]">
-            {/* Sidebar Mockup */}
-            <div className="hidden md:flex flex-col bg-white/2 border-r border-white/5 p-4 text-left">
-              {/* active room chip */}
-              <div className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 mb-3">
-                <p className="text-[9px] uppercase tracking-wider text-slate-500">Room</p>
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs text-slate-200 truncate">Weekend Crew</p>
-                  <i className="fa-solid fa-qrcode text-[11px] text-slate-400"></i>
-                </div>
-                <span className="inline-block mt-1 text-[9px] tracking-[0.2em] text-violet-300 bg-violet-500/20 border border-white/10 rounded-full px-2 py-0.5">
-                  YAP-42
-                </span>
-              </div>
-              <div className="h-8 rounded bg-white/5 mb-4 flex items-center px-3 text-xs text-slate-500">
-                Search user...
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="p-2 rounded bg-violet-500/10 border border-violet-500/20 flex items-center gap-3">
-                  <div className="relative">
-                    <img src={assets.profile_alison} className="w-9 h-9 rounded-full object-cover" alt="" />
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-xs font-semibold truncate text-violet-300">Alison Martin</h4>
-                    <p className="text-[10px] text-slate-500 truncate">Typing a message...</p>
-                  </div>
-                </div>
-                {[
-                  { name: 'Richard Smith', img: assets.profile_richard, status: 'online' },
-                  { name: 'Enrique Martinez', img: assets.profile_enrique, status: 'offline' },
-                  { name: 'Marco Jones', img: assets.profile_marco, status: 'online' }
-                ].map((item, idx) => (
-                  <div key={idx} className="p-2 rounded hover:bg-white/5 flex items-center gap-3 transition-all duration-200">
-                    <div className="relative">
-                      <img src={item.img} className="w-9 h-9 rounded-full object-cover opacity-80" alt="" />
-                      <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-slate-900 rounded-full ${item.status === 'online' ? 'bg-emerald-500' : 'bg-slate-600'}`} />
+              {/* Mock Chat Screen Layout */}
+              <div className="grid grid-cols-1 md:grid-cols-[210px_1fr] h-[330px]">
+                {/* Sidebar Mockup */}
+                <div className="hidden md:flex flex-col bg-white/2 border-r border-white/5 p-4 text-left">
+                  {/* active room chip */}
+                  <div className="rounded-xl bg-white/5 border border-white/10 px-3 py-2 mb-3">
+                    <p className="text-[9px] uppercase tracking-wider text-slate-500">Room</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs text-slate-200 truncate">Weekend Crew</p>
+                      <i className="fa-solid fa-qrcode text-[11px] text-slate-400"></i>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-xs font-medium truncate text-slate-300">{item.name}</h4>
-                      <p className="text-[10px] text-slate-500 truncate">Click to open chat</p>
+                    <span className="inline-block mt-1 text-[9px] tracking-[0.2em] text-violet-300 bg-violet-500/20 border border-white/10 rounded-full px-2 py-0.5">
+                      YAP-42
+                    </span>
+                  </div>
+                  <div className="h-8 rounded bg-white/5 mb-4 flex items-center px-3 text-xs text-slate-500">
+                    Search user...
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="p-2 rounded bg-violet-500/10 border border-violet-500/20 flex items-center gap-3">
+                      <div className="relative">
+                        <img src={assets.profile_alison} className="w-9 h-9 rounded-full object-cover" alt="" />
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-slate-900 rounded-full" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-xs font-semibold truncate text-violet-300">Alison Martin</h4>
+                        <p className="text-[10px] text-slate-500 truncate">Typing a message...</p>
+                      </div>
+                    </div>
+                    {[
+                      { name: 'Richard Smith', img: assets.profile_richard, status: 'online' },
+                      { name: 'Enrique Martinez', img: assets.profile_enrique, status: 'offline' },
+                      { name: 'Marco Jones', img: assets.profile_marco, status: 'online' }
+                    ].map((item, idx) => (
+                      <div key={idx} className="p-2 rounded hover:bg-white/5 flex items-center gap-3 transition-all duration-200">
+                        <div className="relative">
+                          <img src={item.img} className="w-9 h-9 rounded-full object-cover opacity-80" alt="" />
+                          <span className={`absolute bottom-0 right-0 w-2.5 h-2.5 border-2 border-slate-900 rounded-full ${item.status === 'online' ? 'bg-emerald-500' : 'bg-slate-600'}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-xs font-medium truncate text-slate-300">{item.name}</h4>
+                          <p className="text-[10px] text-slate-500 truncate">Click to open chat</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Chat Body Mockup */}
+                <div className="flex flex-col h-full bg-white/1 text-left relative">
+                  {/* Header */}
+                  <div className="px-4 py-3 bg-white/2 border-b border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <img src={assets.profile_alison} className="w-8 h-8 rounded-full object-cover" alt="" />
+                      <div>
+                        <h3 className="text-xs font-semibold text-slate-200">Alison Martin</h3>
+                        <p className="text-[10px] text-emerald-400">Active now</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-full bg-violet-500/25 border border-white/10 flex items-center justify-center">
+                        <i className="fa-solid fa-video text-[10px] text-violet-200"></i>
+                      </span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Chat Body Mockup */}
-            <div className="flex flex-col h-full bg-white/1 text-left relative">
-              {/* Header */}
-              <div className="px-4 py-3 bg-white/2 border-b border-white/5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <img src={assets.profile_alison} className="w-8 h-8 rounded-full object-cover" alt="" />
-                  <div>
-                    <h3 className="text-xs font-semibold text-slate-200">Alison Martin</h3>
-                    <p className="text-[10px] text-emerald-400">Active now</p>
+                  {/* Chat Scroll Area */}
+                  <div className="flex-1 p-4 flex flex-col gap-3 overflow-y-auto">
+                    {mockMessages.map((msg, i) => (
+                      <div
+                        key={i}
+                        id={`mock-bubble-${i}`}
+                        className={`flex flex-col max-w-[75%] ${msg.sender === 'me' ? 'self-end items-end' : 'self-start'}`}
+                        style={{ display: msg.visible ? 'flex' : 'none' }}
+                      >
+                        <div
+                          className={`px-3 py-2.5 rounded-lg text-xs leading-relaxed ${
+                            msg.sender === 'me'
+                              ? 'bg-violet-500/30 text-white rounded-tr-none'
+                              : 'bg-white/10 text-slate-200 rounded-tl-none border border-white/5'
+                          }`}
+                        >
+                          {msg.type === 'call' ? (
+                            <span className="flex items-center gap-2.5 min-w-[190px]">
+                              <span className="w-6 h-6 rounded-full bg-emerald-500/25 flex items-center justify-center shrink-0">
+                                <i className="fa-solid fa-video text-[8px] text-emerald-300"></i>
+                              </span>
+                              <span className="flex-1">{msg.text}</span>
+                              <span className="text-[9px] px-2 py-0.5 rounded-full bg-emerald-500/25 text-emerald-200 border border-white/10 shrink-0">
+                                Join
+                              </span>
+                            </span>
+                          ) : msg.type === 'voice' ? (
+                            <span className="flex items-center gap-2.5 min-w-[140px]">
+                              <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                                <i className="fa-solid fa-play text-[8px]"></i>
+                              </span>
+                              <span className="flex-1 h-1 rounded-full bg-white/25 relative">
+                                <span className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-white/70" />
+                              </span>
+                              <span className="text-[10px] text-slate-300">{msg.text}</span>
+                            </span>
+                          ) : (
+                            msg.text
+                          )}
+                        </div>
+                        <span className="text-[9px] text-slate-500 mt-1 px-1">{msg.time}</span>
+                      </div>
+                    ))}
                   </div>
-                </div>
-                <div className="flex gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
-                </div>
-              </div>
 
-              {/* Chat Scroll Area */}
-              <div className="flex-1 p-4 flex flex-col gap-3 overflow-y-auto">
-                {mockMessages.map((msg, i) => (
-                  <div
-                    key={i}
-                    id={`mock-bubble-${i}`}
-                    className={`flex flex-col max-w-[75%] ${msg.sender === 'me' ? 'self-end items-end' : 'self-start'}`}
-                    style={{ display: msg.visible ? 'flex' : 'none' }}
-                  >
-                    <div
-                      className={`px-3 py-2.5 rounded-lg text-xs leading-relaxed ${
-                        msg.sender === 'me'
-                          ? 'bg-violet-500/30 text-white rounded-tr-none'
-                          : 'bg-white/10 text-slate-200 rounded-tl-none border border-white/5'
-                      }`}
-                    >
-                      {msg.type === 'voice' ? (
-                        <span className="flex items-center gap-2.5 min-w-[140px]">
-                          <span className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                            <i className="fa-solid fa-play text-[8px]"></i>
-                          </span>
-                          <span className="flex-1 h-1 rounded-full bg-white/25 relative">
-                            <span className="absolute inset-y-0 left-0 w-1/3 rounded-full bg-white/70" />
-                          </span>
-                          <span className="text-[10px] text-slate-300">{msg.text}</span>
-                        </span>
-                      ) : (
-                        msg.text
-                      )}
+                  {/* Input Area Mockup */}
+                  <div className="p-3 border-t border-white/5 bg-white/2 flex items-center gap-2">
+                    <div className="flex-1 h-8 rounded-full bg-white/5 border border-white/10 px-4 text-xs flex items-center justify-between text-slate-400">
+                      Write your message...
+                      <img src={assets.gallery_icon} className="w-3.5 h-3.5 opacity-60" alt="" />
                     </div>
-                    <span className="text-[9px] text-slate-500 mt-1 px-1">{msg.time}</span>
+                    <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center cursor-pointer">
+                      <i className="fa-solid fa-microphone text-[11px] text-slate-300"></i>
+                    </div>
                   </div>
-                ))}
-              </div>
-
-              {/* Input Area Mockup */}
-              <div className="p-3 border-t border-white/5 bg-white/2 flex items-center gap-2">
-                <div className="flex-1 h-8 rounded-full bg-white/5 border border-white/10 px-4 text-xs flex items-center justify-between text-slate-400">
-                  Write your message...
-                  <img src={assets.gallery_icon} className="w-3.5 h-3.5 opacity-60" alt="" />
-                </div>
-                <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center cursor-pointer">
-                  <i className="fa-solid fa-microphone text-[11px] text-slate-300"></i>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </ScrollStackItem>
+
+          {/* video call is last, so it is the card that lands on top */}
+          <ScrollStackItem>
+            <div className="rounded-2xl border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_24px_50px_rgba(0,0,0,0.5)] overflow-hidden flex items-center justify-center w-full opacity-95">
+              <img
+                src={assets.videocall}
+                alt="A YapChat video call: four people in a grid with a side panel for chat and emoji reactions"
+                className="w-full h-auto object-contain"
+                width={1566}
+                height={1005}
+              />
+            </div>
+          </ScrollStackItem>
+        </ScrollStack>
       </section>
 
       {/* Features Grid Section */}
@@ -398,6 +484,16 @@ const LandingPage = () => {
               title: 'Voice Notes',
               desc: 'Hold a thought, record it. Pause mid-take, play it back, then send it — or bin it.',
               icon: <i className="fa-solid fa-microphone-lines text-violet-400"></i>
+            },
+            {
+              title: 'Group Video Calls',
+              desc: 'Call straight from a chat or share a call code. Up to eight faces in one grid.',
+              icon: <i className="fa-solid fa-video text-violet-400"></i>
+            },
+            {
+              title: 'In-Call Side Panel',
+              desc: 'Drop links, mute, share your screen and fire off emoji without leaving the call.',
+              icon: <i className="fa-solid fa-face-grin-stars text-violet-400"></i>
             },
             {
               title: 'Photo Sharing',
@@ -472,9 +568,9 @@ const LandingPage = () => {
               },
               {
                 step: '04',
-                title: 'Start yapping',
-                desc: 'Everyone who joined shows up in your sidebar. Text, photos, voice notes.',
-                icon: 'fa-comments'
+                title: 'Yap, or call',
+                desc: 'Text, photos and voice notes — or hit the camera button and go face to face.',
+                icon: 'fa-video'
               }
             ].map((item, i) => (
               <div
@@ -504,7 +600,8 @@ const LandingPage = () => {
             YapChat started as one shared room for everybody. It is now built around private,
             code-based rooms: you decide who gets the code, and nobody outside it can see your
             sidebar or your messages. Under the hood it is React and Tailwind on the front,
-            Express, MongoDB and Socket.IO on the back, with Cloudinary handling photos and voice notes.
+            Express, MongoDB and Socket.IO on the back, with Cloudinary handling photos and voice
+            notes, and WebRTC carrying video calls straight between browsers.
           </p>
           <p className="text-slate-500 text-xs md:text-sm leading-relaxed mb-8 font-light">
             <i className="fa-solid fa-circle-info mr-2 text-violet-400"></i>

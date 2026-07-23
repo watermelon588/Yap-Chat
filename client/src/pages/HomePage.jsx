@@ -4,12 +4,15 @@ import ChatContainer from '../components/ChatContainer'
 import RightSidebar from '../components/RightSidebar'
 import { ChatContext } from '../../context/Chatcontext'
 import { Authcontext } from '../../context/AuthContext'
+import { CallContext } from '../../context/CallContext'
 
 const HomePage = () => {
 
     const {selectedUser, joinRoom} = useContext(ChatContext);
-    const {authUser} = useContext(Authcontext);
+    const {authUser, socket} = useContext(Authcontext);
+    const {joinCall} = useContext(CallContext);
     const joinAttempted = useRef(false);
+    const callAttempted = useRef(false);
 
     // if the user arrived from a QR / invite link, join that room once
     useEffect(() => {
@@ -19,6 +22,16 @@ const HomePage = () => {
       sessionStorage.removeItem("pendingJoinCode");
       joinRoom(code);
     }, [authUser]);
+
+    // same for a video call link - wait for the socket, that is what carries
+    // the signalling
+    useEffect(() => {
+      const code = sessionStorage.getItem("pendingCallCode");
+      if (!authUser || !socket || !code || callAttempted.current) return;
+      callAttempted.current = true;
+      sessionStorage.removeItem("pendingCallCode");
+      joinCall(code);
+    }, [authUser, socket]);
 
   return (
     <div className='w-full h-[100dvh] flex items-center justify-center sm:p-4'>

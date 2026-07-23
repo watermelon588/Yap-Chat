@@ -73,7 +73,6 @@ export const createRoom = async (req, res) => {
     res.json({
       success: false,
       message: "Error creating room",
-      error: error.message,
     });
   }
 };
@@ -125,7 +124,6 @@ export const joinRoom = async (req, res) => {
     res.json({
       success: false,
       message: "Error joining room",
-      error: error.message,
     });
   }
 };
@@ -148,7 +146,6 @@ export const getMyRooms = async (req, res) => {
     res.json({
       success: false,
       message: "Error fetching rooms",
-      error: error.message,
     });
   }
 };
@@ -175,7 +172,6 @@ export const leaveRoom = async (req, res) => {
     res.json({
       success: false,
       message: "Error leaving room",
-      error: error.message,
     });
   }
 };

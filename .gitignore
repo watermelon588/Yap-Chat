@@ -75,3 +75,9 @@ temp/
 # Uploads (if storing locally)
 # -------------------------
 uploads/
+
+# -------------------------
+# Local-only archive of retired assets and scratch files.
+# Kept on disk so nothing is lost, never pushed.
+# -------------------------
+_local-archive/

@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
       const { data } = await axios.post(`/api/auth/${state}`, Credential);
       if (data.success) {
         setAuthUser(data.userData);
-        connectSocket(data.userData);
+        connectSocket(data.userData, data.token);
         axios.defaults.headers.common["token"] = data.token;
         setToken(data.token);
         localStorage.setItem("token", data.token);
@@ -52,7 +52,8 @@ const logout = async ()=>{
     setOnlineUsers([]);
     axios.defaults.headers.common["token"] = null;
     toast.success("Logged out successfully");
-    socket.disconnect();
+    socket?.disconnect();
+    setSocket(null);
 }
 
 // update profile function to handle user profile updates
@@ -73,12 +74,14 @@ const updateProfile = async (updatedData)=>{
 
 
   // Connect socket function to handle socket connection and online users updates
-  const connectSocket = (userData) => {
+  // The server derives who we are from this token - it no longer trusts a user
+  // id sent by the client, so an auth token is required to connect at all.
+  const connectSocket = (userData, authToken) => {
     if (!userData || socket?.connected) return;
+    const activeToken = authToken || token || localStorage.getItem("token");
+    if (!activeToken) return;
     const newsocket = io(backendUrl, {
-      query: {
-        userId: userData._id,
-      },
+      auth: { token: activeToken },
     });
     newsocket.connect();
     setSocket(newsocket);

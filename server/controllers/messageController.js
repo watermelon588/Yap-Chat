@@ -82,7 +82,6 @@ export const getUsersforSidebar = async (req, res) => {
     res.json({
       success: false,
       message: "Error fetching users for sidebar",
-      error: error.message,
     });
   }
 };
@@ -124,7 +123,6 @@ export const getMessages = async (req, res) => {
     res.json({
       success: false,
       message: "Error fetching messages",
-      error: error.message,
     });
   }
 }
@@ -133,7 +131,15 @@ export const getMessages = async (req, res) => {
 export const markMessageAsSeen = async (req, res) => {
     try {
         const {id: messageId} = req.params;
-        await Message.findByIdAndUpdate(messageId, {seen: true});
+        // only the recipient may mark a message read - this used to update any
+        // message id handed to it, by anybody holding a valid token
+        const result = await Message.findOneAndUpdate(
+            { _id: messageId, receiverId: req.user._id },
+            { seen: true },
+        );
+        if (!result) {
+            return res.json({ success: false, message: "Message not found" });
+        }
         res.json({
             success: true,
             message: "Message marked as seen successfully",
@@ -143,7 +149,6 @@ export const markMessageAsSeen = async (req, res) => {
         res.json({
             success: false,
             message: "Error marking message as seen",
-            error: error.message,
         });
     }
 }
@@ -206,7 +211,6 @@ export const deleteMessage = async (req, res) => {
         res.json({
             success: false,
             message: "Error deleting message",
-            error: error.message,
         });
     }
 }
@@ -230,8 +234,20 @@ export const sendMessage = async (req, res) => {
             return res.json({ success: false, message: "That user is not in this room" });
         }
 
+        if (text != null && typeof text !== "string") {
+            return res.json({ success: false, message: "Invalid message" });
+        }
+        if (typeof text === "string" && text.length > 5000) {
+            return res.json({ success: false, message: "Message is too long" });
+        }
+
         let imageUrl;
         if(image){
+            // must be a real upload from the browser, not a URL we would then
+            // ask cloudinary to go and fetch on the caller's behalf
+            if (typeof image !== "string" || !image.startsWith("data:image/")) {
+                return res.json({ success: false, message: "Invalid image upload" });
+            }
             const uploadResponse = await cloudinary.uploader.upload(image)
             imageUrl = uploadResponse.secure_url;
         }
@@ -240,6 +256,9 @@ export const sendMessage = async (req, res) => {
         let audioUrl;
         let audioSeconds = 0;
         if(audio){
+            if (typeof audio !== "string" || !audio.startsWith("data:audio/")) {
+                return res.json({ success: false, message: "Invalid audio upload" });
+            }
             const uploadResponse = await cloudinary.uploader.upload(stripDataUriParams(audio), {
                 resource_type: "video",
                 folder: "voice_notes"
@@ -278,7 +297,6 @@ export const sendMessage = async (req, res) => {
         res.json({
             success: false,
             message: "Error sending message",
-            error: error.message,
         });
     }
 }

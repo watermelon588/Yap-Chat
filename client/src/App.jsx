@@ -10,15 +10,20 @@ import {Toaster} from 'react-hot-toast'
 import { Authcontext } from '../context/AuthContext'
 import { useContext } from 'react'
 import Terms from './pages/Terms'
+import VideoCall from './components/VideoCall'
+import IncomingCall from './components/IncomingCall'
 
 const App = () => {
   const {authUser} = useContext(Authcontext);
 
-  // a QR / invite link looks like /chat?join=CODE - keep the code around so it
-  // survives the trip through the login page
+  // a QR / invite link looks like /chat?join=CODE (room) or /chat?call=CODE
+  // (video call) - keep the code around so it survives the trip through login
   useEffect(() => {
-    const code = new URLSearchParams(window.location.search).get("join");
-    if (code) sessionStorage.setItem("pendingJoinCode", code);
+    const params = new URLSearchParams(window.location.search);
+    const joinCode = params.get("join");
+    const callCode = params.get("call");
+    if (joinCode) sessionStorage.setItem("pendingJoinCode", joinCode);
+    if (callCode) sessionStorage.setItem("pendingCallCode", callCode);
   }, []);
 
   return (
@@ -41,6 +46,10 @@ const App = () => {
         <Route path='/login' element={!authUser ? <LoginPage/> : <Navigate to="/chat" />}/>
         <Route path='/profile' element={authUser ? <ProfilePage/> : <Navigate to="/login" />}/>
       </Routes>
+
+      {/* video calling sits above every route so a ring reaches you anywhere */}
+      <IncomingCall />
+      <VideoCall />
     </div>
   )
 }

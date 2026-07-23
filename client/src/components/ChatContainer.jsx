@@ -3,6 +3,7 @@ import assets from "../assets/assets";
 import { formatMessageTime } from "../lib/utils";
 import { ChatContext } from "../../context/Chatcontext";
 import { Authcontext } from "../../context/AuthContext";
+import { CallContext } from "../../context/CallContext";
 import AudioMessage from "./AudioMessage";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -19,8 +20,20 @@ const ChatContainer = () => {
     sendMessage,
     getMessages,
     deleteMessage,
+    activeRoom,
   } = useContext(ChatContext);
   const { authUser, onlineUsers } = useContext(Authcontext);
+  const { startCall, inCall } = useContext(CallContext);
+
+  // ring the person we are chatting with and drop straight into the call
+  const handleVideoCall = () => {
+    if (inCall) return toast.error("You are already in a call");
+    startCall({
+      title: `Call with ${selectedUser.fullname}`,
+      roomId: activeRoom?._id,
+      invite: [selectedUser._id],
+    });
+  };
 
   // ----------scroll end---------------
   const scrollEnd = useRef();
@@ -263,6 +276,29 @@ const ChatContainer = () => {
             <span className="w-2 h-2 rounded-full bg-green-500 shrink-0"></span>
           )}
         </p>
+        {/* start a video call with this person */}
+        <button
+          onClick={handleVideoCall}
+          disabled={inCall}
+          title={inCall ? "You are already in a call" : "Start a video call"}
+          className="shrink-0 w-9 h-9 rounded-full bg-violet-500/25 hover:bg-violet-500/50 border border-white/10 flex items-center justify-center cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white/90"
+          >
+            <path d="M23 7l-7 5 7 5V7z" />
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+          </svg>
+        </button>
+
         <div className="relative group inline-block">
           <img
             onClick={() => navigate("/terms")}

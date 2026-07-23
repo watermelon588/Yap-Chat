@@ -1,0 +1,61 @@
+.scroll-stack-scroller {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: visible;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/* Modifier when we use window scroll instead of local container scroll */
+.scroll-stack-scroller.window-scroll {
+  overflow: visible;
+  height: auto;
+}
+
+.scroll-stack-inner {
+  padding: 20vh 5rem 50rem;
+  min-height: 100vh;
+}
+
+/* The trailing space is what gives the pin somewhere to run: pinEnd is derived
+   from .scroll-stack-end, so with no bottom padding the cards unpin the instant
+   they stack and the overlap is never actually visible. */
+.scroll-stack-scroller.window-scroll .scroll-stack-inner {
+  padding: 0 0 20rem;
+  min-height: auto;
+}
+
+@media (max-width: 640px) {
+  .scroll-stack-scroller.window-scroll .scroll-stack-inner {
+    padding-bottom: 10rem;
+  }
+}
+
+.scroll-stack-card-wrapper {
+  position: relative;
+}
+
+.scroll-stack-card {
+  transform-origin: top center;
+  will-change: transform, filter;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
+  /* Improve mobile performance */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  position: relative;
+}
+
+.scroll-stack-end {
+  width: 100%;
+  height: 1px;
+}

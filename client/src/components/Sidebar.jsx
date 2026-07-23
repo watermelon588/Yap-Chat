@@ -5,6 +5,7 @@ import { Authcontext } from "../../context/AuthContext";
 import { useContext } from "react";
 import { ChatContext } from "../../context/Chatcontext";
 import RoomPanel from "./RoomPanel";
+import CallPanel from "./CallPanel";
 import BackButton from "./BackButton";
 
 const Sidebar = () => {
@@ -88,17 +89,26 @@ const Sidebar = () => {
         </div>
         {/* room panel */}
         <RoomPanel />
+        {/* start / join a video call */}
+        <CallPanel />
         {/* search box */}
         <div>
           <div
             className="backdrop-blur-xl bg-white/10 border border-white/10
                shadow-[0_0_25px_rgba(0,0,0,0.35)] rounded-full flex items-center gap-3 py-3 px-4 mt-5"
           >
-            <img src={assets.search_icon} alt="search_icon" className="w-3" />
+            <img
+              src={assets.search_icon}
+              alt="search_icon"
+              className="w-3 shrink-0"
+            />
+            {/* min-w-0: a flex child defaults to min-width:auto, so without this
+                the input refuses to shrink below its intrinsic size and pushes
+                out of the sidebar in the narrow three column layout */}
             <input
               onChange={(e) => setInput(e.target.value)}
               type="text"
-              className="bg-transparent border-none outline-none text-white text-xs placeholder-white/40 flex-1"
+              className="bg-transparent border-none outline-none text-white text-xs placeholder-white/40 flex-1 min-w-0 w-full"
               placeholder="Search User ..."
             />
           </div>

@@ -95,19 +95,8 @@ const RoomPanel = () => {
             </p>
           </div>
 
-          {activeRoom && (
-            <button
-              onClick={() => setModal("share")}
-              title="Share room"
-              className="cursor-pointer text-white/70 hover:text-white transition-colors p-1"
-            >
-              {/* qr glyph */}
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm8-2h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 0h3v3h-3v-3z" />
-              </svg>
-            </button>
-          )}
-
+          {/* sharing moved into the dropdown - two icons here crowd the row
+              once the sidebar narrows for the three column layout */}
           <button
             onClick={() => setOpen(!open)}
             title="Switch room"
@@ -220,6 +209,18 @@ const RoomPanel = () => {
                 Join Code
               </button>
             </div>
+
+            {activeRoom && (
+              <button
+                onClick={() => setModal("share")}
+                className="w-full mt-2 cursor-pointer text-[11px] text-white bg-white/5 border border-white/15 rounded-full py-2 hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm8-2h3v3h-3v-3zm5 0h3v3h-3v-3zm-5 5h3v3h-3v-3zm5 0h3v3h-3v-3z" />
+                </svg>
+                Share code &amp; QR
+              </button>
+            )}
           </div>
         )}
       </div>
