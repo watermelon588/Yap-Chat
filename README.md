@@ -13,6 +13,7 @@
 ## Contents
 
 - [What it is](#what-it-is)
+- [Preview](#preview)
 - [Features](#features)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
@@ -35,6 +36,29 @@ people holding that code appear in your sidebar.
 Inside a room you get one-to-one conversations with text, photos and voice
 notes — and you can jump onto a **group video call** with up to eight people,
 either straight from a chat or from a call code you hand out.
+
+---
+
+## Preview
+
+<p align="center">
+  <img src="./assets/Preview1.jpg" alt="Yap Chat interface: signup, chat with media panel, profile details, and the terms page" width="900"/>
+</p>
+
+<p align="center">
+  <em>Signup &middot; chat with the media panel &middot; profile details &middot; terms &amp; privacy</em><br/>
+  <sub><a href="./assets/Preview.jpg">View the same screens as a full-height walkthrough &rarr;</a></sub>
+</p>
+
+### Video calling
+
+<p align="center">
+  <img src="./client/src/assets/videocall.png" alt="A Yap Chat video call: a four person grid with a side panel for chat and emoji reactions" width="900"/>
+</p>
+
+<p align="center">
+  <em>Four participants, screen sharing, live emoji reactions and the in-call side panel</em>
+</p>
 
 ---
 
